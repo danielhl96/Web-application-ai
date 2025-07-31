@@ -4,8 +4,6 @@ import React, { useState } from "react";
 
  
 
-
-
 function App() {
 const [stepIndex, setStepIndex] = useState(0);
 const [showModal, setShowModal] = useState(false);
@@ -36,6 +34,7 @@ const [showResult, setShowResult] = useState(false);
   const handleButtonClick = () => {
     setContentVisible(prevState => !prevState);
     setStepIndex(0)
+    setShowModal(false)
   };
 
   const handleButtonClickValue = () => {
@@ -110,8 +109,7 @@ const [showResult, setShowResult] = useState(false);
             <div className="flex gap-4 justify-center items-center mt-6">
            <input 
     type="file" 
-    className="file-input file-input-bordered file-input-primary" onChange={handleFileChange}
-  />
+    className="file-input file-input-bordered file-input-primary" onChange={handleFileChange } accept="image/jpeg" />
   {showModal && (
   <div className="modal modal-open">
     <div className="modal-box">
@@ -119,7 +117,7 @@ const [showResult, setShowResult] = useState(false);
       <p className="py-4">Are you sure to upload the file?</p>
       <div className="modal-action">
         <button className="btn btn-soft btn-primary" onClick={uploadFile}>Upload</button>
-        <button className="btn btn-soft btn-error" onClick={() => setShowModal(false)}>Cancel</button>
+        <button className="btn btn-soft btn-error" onClick={handleButtonClick}>Cancel</button>
       </div>
     </div>
   </div>
