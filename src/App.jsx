@@ -3,35 +3,68 @@ import './index.css';
 import React, { useState } from "react";
 
  
-var value = 0
-function App() {
-  const [contentVisible, setContentVisible] = useState(true);
 
+
+
+function App() {
+const [stepIndex, setStepIndex] = useState(0);
+const [showModal, setShowModal] = useState(false);
+const [showResult, setShowResult] = useState(false);
+  const display_progress = (index) => {
+  const steps = ["Select a model", "Select a file", "Upload the file", "Result"];
+
+  return (
+    <ul className="steps">
+      {steps.map((step, i) => (
+        <li
+          key={i}
+          className={`step ${i <= index ? "step-primary" : ""}`}
+        >
+          {step}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const [contentVisible, setContentVisible] = useState(true);
+  const [contentVisible2, setContentVisible2] = useState(true);
   const handleButtonClick = () => {
     setContentVisible(prevState => !prevState);
-    value = 0 // Versteckt den Inhalt
+    setStepIndex(0)
   };
 
   const handleButtonClickValue = () => {
-    value = 75
     setContentVisible(prevState => !prevState);
+    setStepIndex(1)
   }
 
  const handleFileChange = (event) => {
     const file = event.target.files[0];
     console.log(file)
-    value = 100
+    setStepIndex(2);
+   setShowModal(true)
+  
   };
 
-  return (
+  const uploadFile = () =>{
+    setShowModal(false)
+    setShowResult(true)
+    setStepIndex(3)
+    setContentVisible2(false)
+  }
+
+    return (
     <>
       {/* Navbar */}
       <div className="navbar bg-neutral text-neutral-content">
         <button className="btn btn-ghost text-xl">AI-App</button>
       </div>
       
- 
- 
       {/* Hauptcontainer */}
       <div className="min-h-screen flex flex-col items-center justify-center gap-6">
         {contentVisible ? (
@@ -63,9 +96,10 @@ function App() {
               </button>
             </div>
             </div>
-          <progress className="progress progress-neutral w-56" value={value} max="100"></progress> 
+   <div>
+  {display_progress(stepIndex)}
+</div>
           </>
-          
         ) : (
            <div className="min-h-screen flex items-center justify-center p-6">
       <div className= "min-h-screen  p-6 flex flex-col items-center justify-center gap-6">
@@ -78,17 +112,29 @@ function App() {
     type="file" 
     className="file-input file-input-bordered file-input-primary" onChange={handleFileChange}
   />
+  {showModal && (
+  <div className="modal modal-open">
+    <div className="modal-box">
+      <h3 className="font-bold text-lg">File upload</h3>
+      <p className="py-4">Are you sure to upload the file?</p>
+      <div className="modal-action">
+        <button className="btn btn-soft btn-primary" onClick={uploadFile}>Upload</button>
+        <button className="btn btn-soft btn-error" onClick={() => setShowModal(false)}>Cancel</button>
+      </div>
+    </div>
+  </div>
+)}
     <button onClick={handleButtonClick}
                 className="btn btn-soft btn-secondary p-4"
               >
                 Back
               </button>
-              
       </div>
       </div>
-      <progress className="progress progress-neutral w-56" value={value} max="100"></progress>
+  <div>
+  {display_progress(stepIndex)}
+</div>
       </div>
-      
       </div>
         )}
       </div>
