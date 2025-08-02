@@ -12,6 +12,9 @@ const [showModal, setShowModal] = useState(false);
 const[imageUrl,setImageUrl] = useState(null)
 const[sfile,setfile] = useState(null)
 const[apiUrl,setApiUrl] = useState(null)
+const[spinnerOn,setSpinner] = useState(true)
+const [contentVisible, setContentVisible] = useState(true);
+const [contentVisible2, setContentVisible2] = useState(true);
 
   const display_progress = (index) => {
   const steps = ["Select a model", "Select a file", "Upload the file", "Result"];
@@ -30,13 +33,13 @@ const[apiUrl,setApiUrl] = useState(null)
   );
 };
 
-  const [contentVisible, setContentVisible] = useState(true);
-  const [contentVisible2, setContentVisible2] = useState(true);
+ 
   const handleButtonClick = () => {
     setContentVisible(prevState => !prevState);
+    setContentVisible2(prevState => !prevState);
     setStepIndex(0)
-    
     setShowModal(false)
+    setSpinner(prevState => !prevState)
   };
 
   const handleButtonClickValue = (path) => {
@@ -52,11 +55,16 @@ const[apiUrl,setApiUrl] = useState(null)
     setShowModal(true)
   };
 
-  const Example = ({ binary64 }) => {
-  return <img src={`data:image/jpeg;base64,${binary64}`} alt="example" />;
+ const Example = ({ binary64, width, height }) => {
+  return (
+    <img
+      src={`data:image/jpeg;base64,${binary64}`}  // base64 encoded image
+      width={width}
+      height={height}
+      alt="Image"
+    />
+  );
 };
-
-
 
   const uploadFile = () =>{
     setShowModal(false)
@@ -65,19 +73,17 @@ const[apiUrl,setApiUrl] = useState(null)
     setContentVisible(false)
     const formData = new FormData();
     formData.append("image",sfile)
-    console.log(formData)
-    console.log(apiUrl)
-   axios.post(apiUrl, formData, {
+    axios.post(apiUrl, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'  // Wichtig, um den Dateityp korrekt zu senden
     }
   })
   .then((res) => {
     setImageUrl(res.data.image)
-    console.log('Response:', res.data.image);
+    setSpinner(false)
   })
-  .catch((err) => {
-    console.error('Error:', err);
+  .catch(() => {
+    setSpinner(false)
   });
   }
 
@@ -175,10 +181,14 @@ const[apiUrl,setApiUrl] = useState(null)
         <div className="min-h-screen p-6 flex flex-col items-center justify-center gap-6">
       <div class="carousel-item">
     <div>
-  {imageUrl && <Example binary64={imageUrl} />}
+      <button onClick={handleButtonClick} className="btn btn-soft btn-primary p-4" >Back </button>
+  {imageUrl && <Example binary64={imageUrl} width={500} height={500} />}
+  
 </div>
   </div>
+ {spinnerOn && (
   <span className="loading loading-spinner loading-xl"></span>
+)}
    <div>{display_progress(stepIndex)}</div>
   </div>
   
