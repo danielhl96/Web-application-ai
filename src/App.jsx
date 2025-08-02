@@ -11,6 +11,7 @@ const [stepIndex, setStepIndex] = useState(0);
 const [showModal, setShowModal] = useState(false);
 const[imageUrl,setImageUrl] = useState(null)
 const[sfile,setfile] = useState(null)
+const[apiUrl,setApiUrl] = useState(null)
 
   const display_progress = (index) => {
   const steps = ["Select a model", "Select a file", "Upload the file", "Result"];
@@ -34,28 +35,28 @@ const[sfile,setfile] = useState(null)
   const handleButtonClick = () => {
     setContentVisible(prevState => !prevState);
     setStepIndex(0)
+    
     setShowModal(false)
   };
 
-  const handleButtonClickValue = () => {
+  const handleButtonClickValue = (path) => {
     setContentVisible(prevState => !prevState);
+    setApiUrl(path)
     setStepIndex(1)
   }
 
  const handleFileChange = (event) => {
     let file = event.target.files[0];
     setfile(file)
-    if(file){
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageUrl(reader.result);
-      };
-      reader.readAsDataURL(file); 
-    }
-  setStepIndex(2);
-  setShowModal(true)
-  
+    setStepIndex(2);
+    setShowModal(true)
   };
+
+  const Example = ({ binary64 }) => {
+  return <img src={`data:image/jpeg;base64,${binary64}`} alt="example" />;
+};
+
+
 
   const uploadFile = () =>{
     setShowModal(false)
@@ -65,25 +66,19 @@ const[sfile,setfile] = useState(null)
     const formData = new FormData();
     formData.append("image",sfile)
     console.log(formData)
-   axios.post('http://localhost:5000/file/mtcnn', formData, {
+    console.log(apiUrl)
+   axios.post(apiUrl, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'  // Wichtig, um den Dateityp korrekt zu senden
     }
   })
   .then((res) => {
-    setfile(res.data.image)
-    console.log(res.data.image)
-     const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageUrl(reader.result);
-      };
-    console.log('Response:', res);
+    setImageUrl(res.data.image)
+    console.log('Response:', res.data.image);
   })
   .catch((err) => {
     console.error('Error:', err);
   });
-
-   
   }
 
    return (
@@ -105,19 +100,19 @@ const[sfile,setfile] = useState(null)
 
               <div className="flex gap-4 justify-center items-center mt-6">
                 <button
-                  onClick={handleButtonClickValue}
+                  onClick={()=> {handleButtonClickValue("http://localhost:5000/file/yolo8")}}
                   className="btn btn-soft btn-primary p-4"
                 >
                   YoloFace
                 </button>
                 <button
-                  onClick={handleButtonClickValue}
+                  onClick={() => handleButtonClickValue("http://localhost:5000/file/mtcnn")}
                   className="btn btn-soft btn-primary p-4"
                 >
                   MTCNN
                 </button>
                 <button
-                  onClick={handleButtonClickValue}
+                   onClick={() =>{handleButtonClickValue("http://localhost:5000/file/can")}}
                   className="btn btn-soft btn-primary p-4"
                 >
                   CAN-CNN
@@ -179,9 +174,9 @@ const[sfile,setfile] = useState(null)
       // Falls contentVisible2 false ist, kannst du null oder ein anderes Element anzeigen lassen
         <div className="min-h-screen p-6 flex flex-col items-center justify-center gap-6">
       <div class="carousel-item">
-    <img
-      src={imageUrl}
-      alt="Selected" />
+    <div>
+  {imageUrl && <Example binary64={imageUrl} />}
+</div>
   </div>
   <span className="loading loading-spinner loading-xl"></span>
    <div>{display_progress(stepIndex)}</div>
