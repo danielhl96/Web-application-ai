@@ -1,5 +1,6 @@
 from flask import Flask, request,jsonify
 import cv2
+from rcnn import rcnn
 from mtcnn import MTCNN
 from flask_cors import CORS
 import numpy as np
@@ -24,16 +25,15 @@ def mtcnn():
     img_bytes = file.read()
     img_array = np.asarray(bytearray(img_bytes), dtype=np.uint8)
     img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
-    img_resized = cv2.resize(img, (500, 500))
-    result = detector.detect_faces(img_resized)
-
+    result = detector.detect_faces(img)
+    
     if len(result) == 0:
         return jsonify({"error": "No faces detected"}), 400
 
     for elem in result:
         x1,y1,x2,y2 = elem["box"]
-        cv2.rectangle(img_resized, (x1, y1), (x2, y2), (0, 255, 0), 2)
-    _, img_encoded = cv2.imencode('.jpg', img_resized)
+        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    _, img_encoded = cv2.imencode('.jpg', img)
     img_base64 = base64.b64encode(img_encoded.tobytes()).decode('utf-8')
     
     return {
@@ -67,10 +67,21 @@ def yolo_face():
 
 @app.route("/file/can",methods=['POST'])
 def can_cnn():
-     return {
+    file = request.files['image']
+    img_bytes = file.read()
+    img_array = np.asarray(bytearray(img_bytes), dtype=np.uint8)
+    img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+    result = rcnn(img)
+    print(result)
+    for elem in result:
+        x1,y1,x2,y2 = elem["box"]
+        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    _, img_encoded = cv2.imencode('.jpg', img)
+    img_base64 = base64.b64encode(img_encoded.tobytes()).decode('utf-8')
+    
+    return {
         "image": img_base64
     } 
-
 
 if __name__ == '__main__':
     app.run()
