@@ -162,10 +162,10 @@ const [label, setlabel] = useState("Loading");
                   MTCNN-Face
                 </button>
                 <button
-                   onClick={() =>{handleButtonClickValue("http://localhost:5000/file/can")}}
+                   onClick={() =>{handleButtonClickValue("http://localhost:5000/file/insightface")}}
                   className="btn btn-soft btn-primary p-4"
                 >
-                  CAN-CNN
+                  InsightFace
                 </button>
               </div>
             </div>

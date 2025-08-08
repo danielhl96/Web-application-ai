@@ -1,6 +1,5 @@
 from flask import Flask, request,jsonify
 import cv2
-from rcnn import rcnn
 from mtcnn import MTCNN
 from flask_cors import CORS
 import numpy as np
@@ -10,6 +9,7 @@ from ultralytics import YOLO
 from supervision import Detections
 from PIL import Image
 from io import BytesIO
+import insight_face
 
 app = Flask(__name__)
 
@@ -65,16 +65,17 @@ def yolo_face():
         "image": img_base64
     } 
 
-@app.route("/file/can",methods=['POST'])
-def can_cnn():
+@app.route("/file/insightface",methods=['POST'])
+def face():
     file = request.files['image']
     img_bytes = file.read()
     img_array = np.asarray(bytearray(img_bytes), dtype=np.uint8)
     img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
-    result = rcnn(img)
-    print(result)
+   
+    result = insight_face.insight_face(img)
+    
     for elem in result:
-        x1,y1,x2,y2 = elem["box"]
+        x1,y1,x2,y2 = elem.bbox.astype(int)
         cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
     _, img_encoded = cv2.imencode('.jpg', img)
     img_base64 = base64.b64encode(img_encoded.tobytes()).decode('utf-8')
