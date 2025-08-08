@@ -18,7 +18,6 @@ else:
     gdown.download(url, model_path)
     model = load_model(model_path)
 
-
 def rcnn(img):
 
     print("Current working dir:", os.getcwd())
