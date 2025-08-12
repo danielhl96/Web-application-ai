@@ -8,6 +8,8 @@ The backend is built with Flask and handles requests to control and select betwe
 # Backend (Flask)
 - Change the folder to backend
 - For the first time you have to install the requirements:
+- Create a virtual environment: python -m venv backend_venv
+- Start the virtual environment: backend_venv\Scripts\Activate
 -   pip install -r requirements.txt
 - Start the backend with
 - python backend.py
