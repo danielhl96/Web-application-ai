@@ -1,4 +1,9 @@
-# React + Vite + Tailwind CSS and DaisyUI
+# Web-Application for face detection
+The application is based on open-source technologies (MTCNN, InsightFace, and YOLOv8), which are state-of-the-art face detection tools.
+
+The backend is built with Flask and handles requests to control and select between the different detectors.
+
+
 
 # Backend (Flask)
 - Change the folder to backend
