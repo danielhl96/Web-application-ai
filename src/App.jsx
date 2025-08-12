@@ -98,7 +98,7 @@ function App() {
       formData.append("image",sfile)
       axios.post(apiUrl, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'  // Wichtig, um den Dateityp korrekt zu senden
+        'Content-Type': 'multipart/form-data'
       }
     })
     .then((res) => {
@@ -124,7 +124,7 @@ function App() {
       <div className="modal modal-open">
                         <div className="modal-box">
                           <h3 className="font-bold text-lg">File upload</h3>
-                          <p className="py-4">Only files up to 25 MB</p>
+                          <p className="py-4">Only files up to 5 MB</p>
                           <div className="modal-action">
                             <button
                               className="btn btn-soft btn-error"
@@ -176,22 +176,18 @@ function App() {
                               Cancel
                             </button>
                           </div>
-              
                         </div>
-              
                       </div>);
   }
 
     return (
     <>
-      {/* Navbar – immer sichtbar */}
       <div className="bg-neutral text-white p-2 sticky top-0 z-10">
       <div className="navbar bg-neutral text-neutral-content">
         <p className="text-xl font-normal">AI-App</p>
       </div>
       </div>
 
-      {/* Hauptinhalt – nur wenn contentVisible2 === true */}
       {contentVisible2 ? (
         <div className="min-h-screen flex flex-col items-center justify-center gap-6">
           {contentVisible ? (
@@ -254,7 +250,7 @@ function App() {
                     </button>
                     
                   </div>
-                  <p className = "mt-1 text-xs text-gray-500 text-center" > Only JPEG and PNG up to 25MB </p>
+                  <p className = "mt-1 text-xs text-gray-500 text-center" > Only JPEG and PNG up to 5MB </p>
                 </div>
                 <div>{display_progress(stepIndex)}</div>
               </div>
